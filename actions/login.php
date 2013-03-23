@@ -42,6 +42,8 @@ if ($result !== true) {
 // We got here, so login was successful
 syslog(LOG_INFO,"Accepted password for $username from {$_SERVER['REMOTE_ADDR']}");
 
+closelog();
+
 $user = get_user_by_username($username);
 if (!$user) {
 	register_error(elgg_echo('login:baduser'));
