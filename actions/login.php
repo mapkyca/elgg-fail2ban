@@ -30,17 +30,22 @@ $result = elgg_authenticate($username, $password);
 
 // Open log
 openlog("elgg({$_SERVER['HTTP_HOST']})", LOG_PID, LOG_AUTH);
+$ip = $_SERVER['REMOTE_ADDR'];
+if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+	 $proxies = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']); // We are behind a proxy 
+	 $ip = trim($proxies[0]);
+}
 
 if ($result !== true) {
         // Log authentication error, in a format almost identical to the SSH rule (for compatibility)
-        syslog(LOG_NOTICE,"Authentication failure for $username from {$_SERVER['REMOTE_ADDR']}");
+        syslog(LOG_NOTICE,"Authentication failure for $username from $ip");
       
 	register_error($result);
 	forward(REFERER);
 }
 
 // We got here, so login was successful
-syslog(LOG_INFO,"Accepted password for $username from {$_SERVER['REMOTE_ADDR']}");
+syslog(LOG_INFO,"Accepted password for $username from $ip");
 
 closelog();
 
